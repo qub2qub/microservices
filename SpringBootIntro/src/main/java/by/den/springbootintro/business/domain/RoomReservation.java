@@ -2,6 +2,10 @@ package by.den.springbootintro.business.domain;
 
 import java.util.Date;
 
+/**
+ * Собирает данные из ТРЁХ классов: ROOM and GUEST and RESERVATION,
+ * чтобы представить единое бизнес ентити
+ */
 public class RoomReservation {
 
     private long roomId;

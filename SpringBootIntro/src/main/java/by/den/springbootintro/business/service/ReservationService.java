@@ -2,6 +2,8 @@ package by.den.springbootintro.business.service;
 
 import by.den.springbootintro.business.domain.RoomReservation;
 import by.den.springbootintro.data.entity.Guest;
+import by.den.springbootintro.data.entity.Reservation;
+import by.den.springbootintro.data.entity.Room;
 import by.den.springbootintro.data.repository.GuestRepository;
 import by.den.springbootintro.data.repository.ReservationRepository;
 import by.den.springbootintro.data.repository.RoomRepository;
@@ -30,34 +32,45 @@ public class ReservationService {
     }
 
     public List<RoomReservation> getRoomReservationsForDate(Date date) {
+        // БУДЕМ хранить всю инфу о комнате
         Map<Long, RoomReservation> roomReservationMap = new HashMap<>();
+        if (date != null) {
 
-        // Add all rooms to "roomReservationMap"
-        roomRepository.findAll().forEach(room -> {
-            RoomReservation roomReservation = new RoomReservation();
-            roomReservation.setRoomId(room.getId());
-            roomReservation.setRoomName(room.getName());
-            roomReservation.setRoomNumber(room.getNumber());
-            roomReservationMap.put(room.getId(), roomReservation);
-        });
+            Iterable<Room> allHotelRooms = roomRepository.findAll();
+            // Add all rooms to "roomReservationMap"
+            allHotelRooms.forEach(room -> {
+                RoomReservation roomReservation = new RoomReservation();
+                roomReservation.setRoomId(room.getId());
+                roomReservation.setRoomName(room.getName());
+                roomReservation.setRoomNumber(room.getNumber());
+                roomReservationMap.put(room.getId(), roomReservation);
+            });
 
-        // Find all res-s by date and guest for each res
-        Optional.ofNullable(reservationRepository.findByDate(new java.sql.Date(date.getTime())))
-            .ifPresent(reservations -> reservations.forEach(reservation -> {
-                Guest guest = this.guestRepository.findOne(reservation.getGuestId());
-                if (guest != null) {
+            // Нашли все комнаты, которые зарезервированы на определённую дату
+            List<Reservation> reservedRoomsForDate =
+                reservationRepository.findByDate(new java.sql.Date(date.getTime()));
+            // и теперь добавляем в списке всех комнал инфу по клиентам на данную дату.
+            Optional.ofNullable(reservedRoomsForDate)
+                .ifPresent(reservations -> reservations.forEach(reservation -> {
+                    // должны будет добавить данные для этой комнаты (из уже полученного списка)
                     RoomReservation roomReservation = roomReservationMap.get(reservation.getId());
                     roomReservation.setDate(date);
-                    roomReservation.setFirstName(guest.getFirstName());
-                    roomReservation.setLastName(guest.getLastName());
-                    roomReservation.setGuestId(guest.getId());
-                }
-            }));
+                    // достаём инфу по гостю (на данную дату на данную комнату)
+                    Guest guest = this.guestRepository.findOne(reservation.getGuestId());
+                    if (guest != null) {
+                        roomReservation.setFirstName(guest.getFirstName());
+                        roomReservation.setLastName(guest.getLastName());
+                        roomReservation.setGuestId(guest.getId());
+                    }
+                }));
 
-        roomReservationMap.forEach( (k,v) -> {
-            System.out.println(k+" \t= "+v);
-        });
+//            roomReservationMap.forEach( (k,v) -> {
+//                System.out.println(k+" \t= "+v);
+//            });
 
+            System.out.println("ReservationService.getRoomReservationsForDate() -> TOTAL = "
+                + reservedRoomsForDate.size());
+        }
         return new ArrayList<>(roomReservationMap.values());
     }
 }
