@@ -7,8 +7,9 @@ import by.den.springbootintro.data.entity.Room;
 import by.den.springbootintro.data.repository.GuestRepository;
 import by.den.springbootintro.data.repository.ReservationRepository;
 import by.den.springbootintro.data.repository.RoomRepository;
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,7 +32,7 @@ public class ReservationService {
         this.reservationRepository = reservationRepository;
     }
 
-    public List<RoomReservation> getRoomReservationsForDate(Date date) {
+    public List<RoomReservation> getRoomReservationsForDate(LocalDate date) {
         // БУДЕМ хранить всю инфу о комнате
         Map<Long, RoomReservation> roomReservationMap = new HashMap<>();
         if (date != null) {
@@ -48,7 +49,7 @@ public class ReservationService {
 
             // Нашли все комнаты, которые зарезервированы на определённую дату
             List<Reservation> reservedRoomsForDate =
-                reservationRepository.findByDate(new java.sql.Date(date.getTime()));
+                reservationRepository.findByDate(Date.valueOf(date));
             // и теперь добавляем в списке всех комнал инфу по клиентам на данную дату.
             Optional.ofNullable(reservedRoomsForDate)
                 .ifPresent(reservations -> reservations.forEach(reservation -> {
@@ -64,12 +65,9 @@ public class ReservationService {
                     }
                 }));
 
-//            roomReservationMap.forEach( (k,v) -> {
-//                System.out.println(k+" \t= "+v);
-//            });
-
-            System.out.println("ReservationService.getRoomReservationsForDate() -> TOTAL = "
-                + reservedRoomsForDate.size());
+            System.out.println("ReservationService.getRoomReservationsForDate()\n"
+                + " -> DATE = " + date
+                + " -> RESERVED = " + reservedRoomsForDate.size());
         }
         return new ArrayList<>(roomReservationMap.values());
     }

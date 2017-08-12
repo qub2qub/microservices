@@ -1,6 +1,7 @@
 package by.den.springbootintro.business.domain;
 
-import java.util.Date;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import java.time.LocalDate;
 
 /**
  * Собирает данные из ТРЁХ классов: ROOM and GUEST and RESERVATION,
@@ -14,7 +15,12 @@ public class RoomReservation {
     private String roomNumber;
     private String firstName;
     private String lastName;
-    private Date date;
+
+    // перед этим надо задать в application.properties
+    // spring.jackson.serialization.write_dates_as_timestamps=false
+    // тогда формат ниже можно не задавать
+     //@JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate date;
 
     public long getRoomId() {
         return roomId;
@@ -64,11 +70,11 @@ public class RoomReservation {
         this.lastName = lastName;
     }
 
-    public Date getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 }

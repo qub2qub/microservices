@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>hotel error</title>
+</head>
+<body>
+<h3>Hotel Reservation Error Page</h3>
+
+
+<div>There was an unexpected error: </div>
+<div>timestamp=<span th:text="${timestamp}" /></div>
+<div>timestamp2=<span th:text="${#dates.format(timestamp, 'dd-MM-yyyy HH:mm:ss.SS Z')}" /></div>
+<div>type=<span th:text="${error}" /></div>
+<div>status=<span th:text="${status}" /></div>
+<div>message=<span th:text="${message}" /></div>
+<p>
+<a href="/" th:href="@{/}">Back to Home Page</a>
+</p>
+</body>
+</html>

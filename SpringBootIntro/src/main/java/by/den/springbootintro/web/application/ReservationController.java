@@ -1,6 +1,7 @@
 package by.den.springbootintro.web.application;
 
 import by.den.springbootintro.business.service.ReservationService;
+import java.time.LocalDate;
 import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -24,20 +25,20 @@ public class ReservationController {
     @RequestMapping(method = RequestMethod.GET)
     public String getReservations(Model model,
         @RequestParam(value = "date", required = false)
-        @DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {
+        @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
 
         model.addAttribute("roomReservations",
-            reservationService.getRoomReservationsForDate((date == null ? new Date() : date)));
+            reservationService.getRoomReservationsForDate((date == null ? LocalDate.now() : date)));
         return "reservations";
     }
 
     @RequestMapping(path = "/{date}", method = RequestMethod.GET)
     public String getReservations1(Model model,
         @PathVariable(value = "date", required = false)
-        @DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {
+        @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
 
         model.addAttribute("roomReservations",
-            reservationService.getRoomReservationsForDate((date == null ? new Date() : date)));
+            reservationService.getRoomReservationsForDate((date == null ? LocalDate.now() : date)));
         return "reservations1";
     }
 }
